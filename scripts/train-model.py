@@ -12,6 +12,7 @@ df = pd.read_csv(data_path)
 # Pretend like something is happening here to train the model
 print("Training the model")
 sleep(20)
+print(df)
 
 # Write output. Outputs must be written to /workflow/outputs/<NAME OF OUTPUT> for it to be tracked.
 named_output = "model"
