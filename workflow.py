@@ -65,7 +65,7 @@ def training_workflow_cache(data_path: str) -> final_outputs:
 
     To run this workflowp, execute the following line in the terminal
 
-    pyflyte run --remote workflow.py training_workflow --data_path /mnt/code/data/data.csv
+    pyflyte run --remote workflow.py training_workflow_cache --data_path /mnt/code/data/data.csv
 
     :param data_path: Path of the CSV file data
     :return: The training results as a model
@@ -73,31 +73,31 @@ def training_workflow_cache(data_path: str) -> final_outputs:
 
     data_prep_job_config = DominoJobConfig(
         Command="python /mnt/code/scripts/prep-data.py",
-        MainRepoGitRef=GitRef(Type="commitId", Value="2f1cb9bf696921f0")
+        MainRepoGitRef=GitRef(Type="commitId", Value="c194b7b5a59a9ccc97b138d66cf95021d01c2992")
     )
     data_prep_job = DominoJobTask(
         name='Prepare Data',
         domino_job_config=data_prep_job_config,
         inputs={'data_path': str},
-        outputs={'processed_data': FlyteFile[TypeVar("csv")]},
+        outputs={'processed_data': FlyteFile},
         use_latest=True,
         cache=True,
-        cache_version="1.0"
+        cache_version="1.1"
     )
     data_prep_results = data_prep_job(data_path=data_path)
 
     training_job_config = DominoJobConfig(
         Command="python /mnt/code/scripts/train-model.py",
-        MainRepoGitRef=GitRef(Type="commitId", Value="2f1cb9bf696921f0")
+        MainRepoGitRef=GitRef(Type="commitId", Value="c194b7b5a59a9ccc97b138d66cf95021d01c2992")
     )
     training_job = DominoJobTask(
         name='Train model',
         domino_job_config=training_job_config,
-        inputs={'processed_data': FlyteFile[TypeVar("csv")]},
+        inputs={'processed_data': FlyteFile},
         outputs={'model': FlyteFile},
         use_latest=True,
         cache=True,
-        cache_version="1.0"
+        cache_version="1.1"
     )
     training_results = training_job(processed_data=data_prep_results["processed_data"])
 
